@@ -22,7 +22,8 @@ from a_users.views import profile_view
 from a_home.views import *
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
+    path('bigballz/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('', include('a_rtchat.urls')),
     path('profile/', include('a_users.urls')),
