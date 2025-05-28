@@ -22,12 +22,13 @@ from a_users.views import profile_view
 from a_home.views import *
 
 urlpatterns = [
-    path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
-    path('bigballz/', admin.site.urls),
+    path('admin/', admin.site.urls),
+    #path('red_right_hand/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('', include('a_rtchat.urls')),
+    path('', include('a_users.urls')),
     path('profile/', include('a_users.urls')),
     path('@<username>/', profile_view, name="profile"),
+    path('chat/', include('a_rtchat.urls')),
 ]
 
 # Only used when DEBUG=True, whitenoise can serve files when DEBUG=False

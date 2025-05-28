@@ -1,0 +1,49 @@
+{% extends 'layouts/blank.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<div class="max-w-4xl mx-auto px-8 py-16">
+    <h1 class="text-3xl font-bold">Welcome, {{ user.username }}!</h1>
+    <p class="mt-2 text-gray-600">Start chatting with your friends or explore new conversations.</p>
+
+    <div class="flex gap-4 mt-8 mb-8">
+        <a href="{% url 'new-groupchat' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Create Group</a>
+        <a href="{% url 'profile-edit' %}" class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300">Edit Profile</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Group Chats -->
+        <div>
+            <h2 class="mb-4 text-xl font-bold">Your Group Chats</h2>
+            <ul>
+                {% for group in user_groups %}
+                    <li class="mb-2 p-3 bg-white rounded shadow flex items-center">
+                        <span class="font-semibold flex-1">
+                            <a href="{% url 'chatroom' chatroom_name=group.group_name %}" class="hover:underline">
+                                {{ group.groupchat_name|default:group.group_name }}
+                            </a>
+                        </span>
+                        {% if group.group_name != "public-chat" %}
+                        <span class="text-sm text-gray-500 ml-2">
+                            {{ group.members.count }} member{{ group.members.count|pluralize }}
+                        </span>
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li class="text-gray-500">You are not a member of any groups yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Chat With Friends Button -->
+        <div class="flex flex-col items-center justify-center">
+            <a href="{% url 'user-list' %}" class="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 text-lg font-semibold mt-8">
+                Chat with classmates and teachers
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
