@@ -3,16 +3,10 @@
 {% block content %}
 <div class="max-w-2xl mx-auto px-8 py-16">
     <h2 class="text-2xl font-bold mb-6">All Users</h2>
-    <ul>
-        {% for u in users %}
-            <li class="flex items-center mb-4 p-3 bg-white rounded shadow">
-                <img src="{{ u.profile.avatar }}" alt="{{ u.username }}" class="w-8 h-8 rounded-full mr-3 border">
-                <span class="flex-1 font-semibold">{{ u.profile.name }}</span>
-                <a href="{% url 'start-chat' username=u.username %}" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Chat</a>
-            </li>
-        {% empty %}
-            <li>No other users found.</li>
-        {% endfor %}
-    </ul>
+    <div id="user-list-container" hx-ext="ws" ws-connect="/ws/online-status/">
+        <div id="user-list-content">
+            {% include 'a_users/partials/user_list_partial.html' with users=users online_users=online_users %}
+        </div>
+    </div>
 </div>
 {% endblock %}
