@@ -91,3 +91,27 @@ def profile_delete_view(request):
         return redirect('home')
     
     return render(request, 'a_users/profile_delete.html')
+
+from a_rtchat.models import ChatGroup
+
+@login_required
+def welcome_page(request):
+    user = request.user
+    user_groups = list(user.chat_groups.filter(is_private=False))
+    try:
+        public_chat = ChatGroup.objects.get(group_name='public-chat')
+        if public_chat not in user_groups:
+            user_groups = [public_chat] + user_groups
+    except ChatGroup.DoesNotExist:
+        pass
+    user_private_chats = user.chat_groups.filter(is_private=True)
+    return render(request, 'a_users/welcome_page.html', {
+        'user': user,
+        'user_groups': user_groups,
+        'user_private_chats': user_private_chats,
+    })
+
+@login_required
+def user_list_view(request):
+    users = User.objects.exclude(id=request.user.id)
+    return render(request, 'a_users/user_list.html', {'users': users})

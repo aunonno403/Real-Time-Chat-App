@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from asgiref.sync import async_to_sync
 import json
 from .models import *
+from django.contrib.auth.models import User
 
 class ChatroomConsumer(WebsocketConsumer):
     def connect(self):
@@ -101,6 +102,7 @@ class OnlineStatusConsumer(WebsocketConsumer):
         
         self.accept()
         self.online_status()
+        self.send_online_user_ids()  # Add this
         
         
     def disconnect(self, close_code):
@@ -111,6 +113,7 @@ class OnlineStatusConsumer(WebsocketConsumer):
             self.group_name, self.channel_name
         )
         self.online_status()
+        self.send_online_user_ids()  # Add this
         
         
     def online_status(self):
@@ -134,6 +137,7 @@ class OnlineStatusConsumer(WebsocketConsumer):
         else:
             online_in_chats = False
         
+        # Existing context for online_status.html
         context = {
             'online_users': online_users,
             'online_in_chats': online_in_chats,
@@ -141,4 +145,25 @@ class OnlineStatusConsumer(WebsocketConsumer):
             'user': self.user
         }
         html = render_to_string("a_rtchat/partials/online_status.html", context=context)
-        self.send(text_data=html)         
+        self.send(text_data=html)
+
+        # --- Add this: send user list partial for user_list.html ---
+        all_users = User.objects.exclude(id=self.user.id)
+        user_list_context = {
+            'users': all_users,
+            'online_users': online_users,
+        }
+        user_list_html = render_to_string(
+            "a_users/partials/user_list_partial.html",
+            user_list_context
+        )
+        # Only send the inner content for swapping
+        self.send(text_data=f'<div id="user-list-content">{user_list_html}</div>')
+
+    def send_online_user_ids(self):
+        online_users = self.group.users_online.all()
+        user_ids = list(online_users.values_list('id', flat=True))
+        self.send(text_data=json.dumps({
+            'type': 'online_users_update',
+            'online_user_ids': user_ids,
+        }))

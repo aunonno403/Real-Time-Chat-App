@@ -1,0 +1,19 @@
+<ul>
+    {% for u in users %}
+        <li class="flex items-center mb-4 p-3 bg-white rounded shadow">
+            <div class="relative mr-3">
+                <img src="{{ u.profile.avatar }}" alt="{{ u.username }}" class="w-8 h-8 rounded-full border">
+                <!-- Status dot -->
+                {% if u in online_users %}
+                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
+                {% else %}
+                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-gray-400 border-2 border-white rounded-full"></span>
+                {% endif %}
+            </div>
+            <span class="flex-1 font-semibold">{{ u.profile.name }}</span>
+            <a href="{% url 'start-chat' username=u.username %}" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Chat</a>
+        </li>
+    {% empty %}
+        <li>No other users found.</li>
+    {% endfor %}
+</ul>
