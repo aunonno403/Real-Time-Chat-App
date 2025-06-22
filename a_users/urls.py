@@ -13,4 +13,7 @@ urlpatterns = [
     path('users/', user_list_view, name="user-list"),
     path('batches/', batch_list_view, name="batch-list"),
     path('batches/<int:batch>/', batch_user_list_view, name="batch-user-list"),
+    path('departments/', dept_list_view, name="dept-list"),
+    path('departments/<str:department>/', dept_list_batch_view, name="dept-list-batch"),
+    path('departments/<str:department>/<int:batch>/', dept_batch_user_list_view, name="dept-batch-user-list"),
 ]

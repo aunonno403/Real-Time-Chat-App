@@ -159,3 +159,38 @@ def batch_user_list_view(request, batch):
         'users': users,
         'online_users': online_users,
     })
+
+@login_required
+def dept_list_view(request):
+    departments = ['CSE', 'IIT', 'Economics']
+    return render(request, 'a_users/dept_list.html', {'departments': departments})
+
+@login_required
+def dept_list_batch_view(request, department):
+    # Example batches, adjust as needed
+    batches = list(range(48, 54))
+    return render(request, 'a_users/dept_list_batch.html', {
+        'department': department,
+        'batches': batches,
+    })
+
+@login_required
+def dept_batch_user_list_view(request, department, batch):
+    users = User.objects.exclude(id=request.user.id).filter(
+        profile__isnull=False,
+        profile__department=department,
+        profile__batch=batch
+    ).select_related('profile')
+    # Get the ChatGroup for online status
+    from a_rtchat.models import ChatGroup
+    try:
+        online_status_group = ChatGroup.objects.get(group_name='online-status')
+        online_users = online_status_group.users_online.all()
+    except ChatGroup.DoesNotExist:
+        online_users = User.objects.none()
+    return render(request, 'a_users/partials/dept_list_partial.html', {
+        'department': department,
+        'batch': batch,
+        'users': users,
+        'online_users': online_users,  # <-- Pass this!
+    })

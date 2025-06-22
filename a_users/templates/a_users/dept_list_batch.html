@@ -1,0 +1,16 @@
+{% extends 'layouts/blank.html' %}
+
+{% block content %}
+<div class="max-w-xl mx-auto py-12">
+    <h2 class="text-2xl font-bold mb-6">Select a Batch in {{ department }}</h2>
+    <ul>
+        {% for batch in batches %}
+        <li class="mb-4">
+            <a href="{% url 'dept-batch-user-list' department batch %}" class="block px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 text-lg font-semibold">
+                Batch {{ batch }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
