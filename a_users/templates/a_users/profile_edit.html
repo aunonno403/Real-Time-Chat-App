@@ -15,6 +15,19 @@
         <div class="text-gray-400 mb-2 -mt-3">@{{ user.username }}</div>
     </div>
 </div>
+
+<!-- Display department and batch as read-only -->
+<div class="mb-4 flex flex-col items-center">
+    <div>
+        <strong>Department:</strong>
+        <span>{{ user.profile.department|default:"-" }}</span>
+    </div>
+    <div>
+        <strong>Batch:</strong>
+        <span>{{ user.profile.batch|default:"-" }}</span>
+    </div>
+</div>
+
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
@@ -26,32 +39,24 @@
     {% endif %}
 </form>
 
-
-
-
 <script>
-    
     // This updates the avatar
     const fileInput = document.querySelector('input[type="file"]');
-
     fileInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    const image = document.querySelector('#avatar');
-
-    if (file && file.type.includes('image')) {
-        const url = URL.createObjectURL(file);
-        image.src = url;
-    }
+        const file = event.target.files[0];
+        const image = document.querySelector('#avatar');
+        if (file && file.type.includes('image')) {
+            const url = URL.createObjectURL(file);
+            image.src = url;
+        }
     });
 
     // This updates the name
     const display_nameInput = document.getElementById('id_displayname');
     const display_nameOutput = document.getElementById('displayname');
-
     display_nameInput.addEventListener('input', (event) => {
         display_nameOutput.innerText = event.target.value;
     });
-
 </script>
 
 {% endblock %}

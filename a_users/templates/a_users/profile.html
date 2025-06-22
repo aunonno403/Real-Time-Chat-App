@@ -7,6 +7,19 @@
     <div class="text-center">
         <h1>{{ profile.name }}</h1>
         <div class="text-gray-400 mb-2 -mt-3">@{{ profile.user.username }}</div>
+        
+        <!-- Display department and batch as read-only -->
+        <div class="mb-4 flex flex-col items-center">
+            <div>
+                <strong>Department:</strong>
+                <span>{{ profile.department|default:"-" }}</span>
+            </div>
+            <div>
+                <strong>Batch:</strong>
+                <span>{{ profile.batch|default:"-" }}</span>
+            </div>
+        </div>
+        
         {% if profile.info %}
         <div class="mt-8 hyphens-auto">{{ profile.info|linebreaksbr }}</div>
         {% endif %}
