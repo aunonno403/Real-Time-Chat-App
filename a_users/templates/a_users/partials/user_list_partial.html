@@ -10,7 +10,12 @@
                     <span class="absolute bottom-0 right-0 w-3 h-3 bg-gray-400 border-2 border-white rounded-full"></span>
                 {% endif %}
             </div>
-            <span class="flex-1 font-semibold">{{ u.profile.name }}</span>
+            <div class="flex-1">
+                <span class="font-semibold">{{ u.profile.name }}</span>
+                <div class="text-xs text-gray-500">
+                    {{ u.profile.department }} | {{ u.profile.batch }}
+                </div>
+            </div>
             <a href="{% url 'start-chat' username=u.username %}" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Chat</a>
         </li>
     {% empty %}

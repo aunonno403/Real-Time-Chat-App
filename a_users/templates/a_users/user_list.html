@@ -2,7 +2,9 @@
 
 {% block content %}
 <div class="max-w-2xl mx-auto px-8 py-16">
-    <h2 class="text-2xl font-bold mb-6">All Users</h2>
+    <h2 class="text-2xl font-bold mb-6">
+        Users in {{ request.user.profile.department }} - Batch {{ request.user.profile.batch }}
+    </h2>
     <div id="user-list-container" hx-ext="ws" ws-connect="/ws/online-status/">
         <div id="user-list-content">
             {% include 'a_users/partials/user_list_partial.html' with users=users online_users=online_users %}

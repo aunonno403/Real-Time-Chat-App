@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import redirect_to_login
 from django.contrib import messages
 from .forms import *
+from django.contrib.auth.models import User
+from a_users.models import Profile
 
 def profile_view(request, username=None):
     if username:
@@ -113,5 +115,14 @@ def welcome_page(request):
 
 @login_required
 def user_list_view(request):
-    users = User.objects.exclude(id=request.user.id)
-    return render(request, 'a_users/user_list.html', {'users': users})
+    current_profile = request.user.profile
+    users = User.objects.exclude(id=request.user.id).filter(
+        profile__isnull=False,
+        profile__department=current_profile.department,
+        profile__batch=current_profile.batch
+    ).select_related('profile')
+    online_users = []  # Placeholder, update with your online user logic if needed
+    return render(request, 'a_users/user_list.html', {
+        'users': users,
+        'online_users': online_users,
+    })

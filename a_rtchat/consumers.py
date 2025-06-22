@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from asgiref.sync import async_to_sync
 import json
+from a_users.models import Profile
 from .models import *
 from django.contrib.auth.models import User
 
@@ -148,9 +149,23 @@ class OnlineStatusConsumer(WebsocketConsumer):
         self.send(text_data=html)
 
         # --- Add this: send user list partial for user_list.html ---
-        all_users = User.objects.exclude(id=self.user.id)
+        # Get the current user's department and batch
+        try:
+            profile = self.user.profile
+            department = profile.department
+            batch = profile.batch
+        except Profile.DoesNotExist:
+            department = None
+            batch = None
+
+        # Filter users by department and batch
+        filtered_users = User.objects.exclude(id=self.user.id).filter(
+            profile__department=department,
+            profile__batch=batch
+        )
+
         user_list_context = {
-            'users': all_users,
+            'users': filtered_users,
             'online_users': online_users,
         }
         user_list_html = render_to_string(
