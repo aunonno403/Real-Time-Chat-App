@@ -9,6 +9,7 @@ from django.contrib import messages
 from .forms import *
 from django.contrib.auth.models import User
 from a_users.models import Profile
+from django.core.cache import cache
 
 def profile_view(request, username=None):
     if username:
@@ -123,6 +124,38 @@ def user_list_view(request):
     ).select_related('profile')
     online_users = []  # Placeholder, update with your online user logic if needed
     return render(request, 'a_users/user_list.html', {
+        'users': users,
+        'online_users': online_users,
+    })
+
+@login_required
+def batch_list_view(request):
+    current_profile = request.user.profile
+    department = current_profile.department
+    batches = list(range(48, 54))  # 48 to 53 inclusive
+    return render(request, 'a_users/batch_list.html', {
+        'department': department,
+        'batches': batches,
+    })
+
+@login_required
+def batch_user_list_view(request, batch):
+    current_profile = request.user.profile
+    department = current_profile.department
+    users = User.objects.exclude(id=request.user.id).filter(
+        profile__isnull=False,
+        profile__department=department,
+        profile__batch=batch
+    ).select_related('profile')
+    # Get the ChatGroup for online status
+    try:
+        online_status_group = ChatGroup.objects.get(group_name='online-status')
+        online_users = online_status_group.users_online.all()
+    except ChatGroup.DoesNotExist:
+        online_users = User.objects.none()
+    return render(request, 'a_users/partials/batch_list_partial.html', {
+        'batch': batch,
+        'department': department,
         'users': users,
         'online_users': online_users,
     })

@@ -11,4 +11,6 @@ urlpatterns = [
     path('emailverify/', profile_emailverify, name="profile-emailverify"),
     path('delete/', profile_delete_view, name="profile-delete"),
     path('users/', user_list_view, name="user-list"),
+    path('batches/', batch_list_view, name="batch-list"),
+    path('batches/<int:batch>/', batch_user_list_view, name="batch-user-list"),
 ]
